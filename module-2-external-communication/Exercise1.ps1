@@ -8,8 +8,8 @@
 # an Azure SignalR Service so that the hub will be hosted on the cloud.
 
 # 1.1 Give a name to your SignalR Resource.
-
-$signalr = "<signalr-name>"
+$emailResourceGroup = 'advanced-azure-workshop'
+$signalr = "rg-avb-advancedAzureWorkshop-signalRService"
 
 # 1.2 Create the SignalR resource.
 
@@ -33,7 +33,7 @@ az signalr create `
 
 # 2.4 Set the Connection string inside your console.
 
-$signalrEndpoint = "<singalr-connection-string>"
+$signalrEndpoint = "Endpoint=https://rg-avb-advancedazureworkshop-signalrservice.service.signalr.net;AccessKey=4NpZtKfONEoHbvOSzLB6CpXiraOmjKXjvLwsEflOCTnrGWlzGtoDJQQJ99ALAC5RqLJXJ3w3AAAAASRS3LIk;Version=1.0;"
 
 # Bonus: You can also get the connection string using the Azure CLI command below.
 $signalrEndpoint = az signalr key list --name $signalr --resource-group $emailResourceGroup --query primaryConnectionString --output tsv
@@ -60,7 +60,7 @@ az extension update --name communication
 # 3.1. To send e-mails to the users of the application, you will need an Azure Communication Service with SMTP capabilities.
 
 # Name your Azure Communication Service.
-$acsName = "acs-$prefix-<communication-service-name>"
+$acsName = "acs-avb-communicationservice"
 
 # If you want to choose a different region for your Azure Communication Service "--data-location", you can review the available regions on https://learn.microsoft.com/en-us/azure/communication-services/concepts/privacy#data-residency
 
@@ -68,25 +68,25 @@ az communication create `
   --name $acsName `
   --location "Global" `
   --data-location "europe" `
-  --resource-group $emailResourceGroup
+  --resource-group "advanced-azure-workshop"
 
 # 3.2 Azure Communication Service has multiple ways of client communication.
 # To use the email functionality, you need an Azure Email Communication Service.
 
 # Name your email service
-$emailServiceName = "$prefix-<email-service-name>"
+$emailServiceName = "avb-emailservice"
 
 # Create the Email Communication Service
 az communication email create `
   --name $emailServiceName `
-  --resource-group $emailResourceGroup `
+  --resource-group "advanced-azure-workshop"`
   --location "Global" `
   --data-location "europe"
 
 # 3.3 The Email Communication Service also needs a Email Communication Services Domain for sending emails.
 
 az communication email domain create `
-  --resource-group $emailResourceGroup `
+  --resource-group "advanced-azure-workshop" `
   --domain-name AzureManagedDomain `
   --domain-management AzureManaged `
   --email-service-name $emailServiceName `
@@ -100,7 +100,7 @@ az communication email domain create `
 # Navigate to your Azure Communication Service resource, on the side menu, under Settings you will find the Keys tab.
 
 # Your SMTP Connection String.
-$smtp = "<SMTP-connection-string>"
+$smtp = "endpoint=https://acs-avb-communicationservice.europe.communication.azure.com/;accesskey=41j48KkAU0hmW8508QcSQB06G7zSNY1aryy0FlSe2dB8PmSFiJY4JQQJ99ALACULyCpOrBIUAAAAAZCS1fmF"
 
 # Alternative way to get the SMTP Connection String using the Azure CLI:
 # $smtp = az communication list-key --name $acsName --resource-group $emailResourceGroup --query primaryConnectionString --output tsv
@@ -109,7 +109,7 @@ $smtp = "<SMTP-connection-string>"
 # In the Email Communication Services Domain resource, under the MailFrom addresses tab.
 
 # Your no-reply email address.
-$senderDnR = "<Sender>"
+$senderDnR = "DoNotReply@afa99fdf-ada7-4a4e-b699-b553ab644cac.azurecomm.net"
 
 <# Alternative get using the Azure CLI:
 $mailFromSenderDomain = az communication email domain show `
@@ -123,18 +123,18 @@ $senderDnR = "DoNotReply@$mailFromSenderDomain"
 
 # 4.3 To redeploy the API's with the new Environment Variables, run the following commands:
 
-$botApi
-$gameApi
-$apiResourceGroup
-$gitRepositoryOwner
-#$gitPAT
-$botContainerUrl
-$gameContainerUrl
-$signalrEndpoint
-$smtp
-$senderDnR
+$botApi = 'avbbotapi'
+$gameApi = 'avbgameapi'
+$apiResourceGroup = 'rg-avb-exercise1-apis'
+$gitRepositoryOwner = 'arnevanbael'
+$gitPAT = ''
+# $botContainerUrl = ''
+# $gameContainerUrl
+#$signalrEndpoint
+#$smtp
+#$senderDnR
 
-<# Ensure that all variables are set correctly before running the commands. Here is an example of how to set the variables:
+#Ensure that all variables are set correctly before running the commands. Here is an example of how to set the variables:
 $botContainerUrl = az containerapp show --name $botApi --resource-group $apiResourceGroup |
   ConvertFrom-Json |
   Select-Object -ExpandProperty properties |
@@ -150,7 +150,7 @@ $gameContainerUrl = az containerapp show --name $gameApi --resource-group $apiRe
   Select-Object -ExpandProperty ingress |
   Select-Object -ExpandProperty fqdn
 $gameContainerUrl = "https://$gameContainerUrl"
-#>
+
 
 # Update the game api container with a new image that has the SignalR functionality and the new environment variables.
 az containerapp up `
@@ -173,5 +173,5 @@ az containerapp up `
 # 4.5. Update the Environment Variables of the Static Web App to use SignalR
 
 az staticwebapp appsettings set `
-  --name $staticWebName `
+  --name 'swa-avb-exercise1' `
   --setting-names "GAMEAPI_URL=$gameContainerUrl" "BOTAPI_URL=$botContainerUrl"
