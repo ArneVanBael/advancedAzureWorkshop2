@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------------------------------------------------
 # Exercise 1
 
-$prefix = "<your-initials>"
+$prefix = "avb"
 
 # Note: Replacing placeholders in this workshop is such that the whole "<to be replaced>" is replaced with your value.
 #       For example: The name you think of is 'foo' and the string with placeholder is "<to be replaced>". Then the outcome is "name".
@@ -12,46 +12,46 @@ $prefix = "<your-initials>"
 
 az account list-locations -o table
 # Choose a location from the list and set it as the location variable.
-$location = "<resource-group-location>"
+$location = "West Europe"
 
 # 1.1 Create your resource-group for APIs.
 
-$apiResourceGroup = "rg-$($prefix)-<resource-group-name>"
+$apiResourceGroup = "rg-$($prefix)-exercise1-apis"
 az group create --name $apiResourceGroup --location $location
 
 # 1.2 Create a resource-group for the database.
 
-$dbResourceGroup = "rg-$($prefix)-<resource-group-name>"
+$dbResourceGroup = "rg-$($prefix)-exercise1-db"
 az group create --name $dbResourceGroup --location $location
 
 # 1.3 Set the variables used on deployment.
 
 # Your github owner name (lowercase).
-$gitRepositoryOwner = "<owner-repository-github>"
+$gitRepositoryOwner = "arnevanbael"
 
 # Your Github token (PAT) value. Created in module 0.
-$gitPAT = "<github-PAT>"
+$gitPAT = ""
 
 # Cosmos Database Account name.
-$cosmosDbAccount = "cosmos-$($prefix)-<db-account-name>"
+$cosmosDbAccount = "cosmos-$($prefix)-exercise1-cosmosdb"
 
 # Bot container name.
-$botApi = "$($prefix)<botapi-container-name>"
+$botApi = "$($prefix)botapi"
 
 # Game container name.
-$gameApi = "$($prefix)<gameapi-container-name>"
+$gameApi = "$($prefix)gameapi"
 
 # Managed Environment resource name.
-$managedEnvironment = "$($prefix)<managed-environment-name>"
+$managedEnvironment = "$($prefix)exercise1managedenvironment"
 
 # Vnet name for managed environment.
-$vnetName = "$($prefix)<vnet-name>"
+$vnetName = "$($prefix)virtualnetwork"
 
 # Subnet name for managed environment.
-$environmentSubnet = "$($prefix)<environment-subnet-name>"
+$environmentSubnet = "$($prefix)subnet"
 
 # Set the local path to the API ARM deployment file from the \infra\arm folder in this project.
-cd "<path-to-project-folder>\infra\arm"
+cd "C:\Axxes\Projects\advancedAzureWorkshop2\infra\arm"
 
 # 1.4 Deploy the API using an ARM template and your variables.
 
@@ -95,15 +95,15 @@ az deployment group create `
 
 # 2.0 Create your resource-group for static web app for the UI app.
 
-$appResourceGroup = "rg-$($prefix)-<resource-group-name>"
+$appResourceGroup = "rg-$($prefix)-exercise1staticwebapp"
 az group create --name $appResourceGroup --location $location
 
 # 2.1 Deploy your static web app in the same Resource Group with the APIs.
 
-$staticWebName = "swa-$($prefix)-<Static-Web-App-Name>"
+$staticWebName = "swa-$($prefix)-exercise1"
 
-$githubrepositoryurl = "<Your Github Repository url>"
-$branch = "<The branch you want to use for deployment>"
+$githubrepositoryurl = "https://github.com/ArneVanBael/advancedAzureWorkshop2"
+$branch = "main"
 
 az staticwebapp create `
   --name $staticWebName `
@@ -184,7 +184,7 @@ az extension add --name containerapp --upgrade
 # 3.2 Configuring statestore using statestore.yaml file from the local *infra* folder.
 
 # The path to the statestore.yaml file from the /infra folder in this project.
-cd "<your-folder-for-the-file-statestore.yaml>"
+cd "C:\Axxes\Projects\advancedAzureWorkshop2\infra\"
 
 $cosmosUrl = az cosmosdb show --name $cosmosDbAccount --resource-group $dbResourceGroup --query documentEndpoint --output tsv
 $cosmosPrimaryKey = az cosmosdb keys list --name $cosmosDbAccount --resource-group $dbResourceGroup --query primaryMasterKey --output tsv
@@ -276,18 +276,18 @@ az containerapp up `
 
 # Choose a secondary location from the list and set it as the location variable.
 az account list-locations -o table
-$location2 = "<location-name>"
+$location2 = "East US"
 
 # 5.1 Create the resource group.
 
 # Second API resource group name.
-$apiResourceGroup2 = "rg-$($prefix)-<resource-group-name>"
+$apiResourceGroup2 = "rg-$($prefix)-exercise1-apis-eastus"
 az group create --name $apiResourceGroup2 --location $location2
 
 # 5.2 Create the environment.
 
 # Second managed environment name.
-$managedEnvironment2 = "$($prefix)<second-managed-environment-name>"
+$managedEnvironment2 = "$($prefix)exercise1managedenvironment-eastus"
 
 # Deploy a second managed environment on the second region, but not with ARM template, instead use the az containerapp command.
 az containerapp env create `
@@ -308,7 +308,7 @@ az containerapp env dapr-component set `
 # 5.4 Create your second Container App and save its host name in a variable for later.
 
 # Your second bot container name.
-$botApi2 = "$($prefix)<second-botapi-container-name>"
+$botApi2 = "$($prefix)botapi-east-us"
 
 # Deploy the second bot container on the second region (in managed environment 2).
 az containerapp create `
@@ -357,13 +357,13 @@ $botContainerHN2 = Get-ContainerAppFqdn -resourceGroup $apiResourceGroup2 -conta
 # 6.1. Create a new resource-group for Front Door.
 
 # Network resource group name.
-$networkRGName = "rg-$($prefix)-<resource-group-name>"
+$networkRGName = "rg-$($prefix)-frontdoor"
 az group create --name $networkRGName --location $location
 
 # 6.2 Create Azure Front Door profile.
 
 # Azure Front Door profile.
-$frontDoorProfileName = "$($prefix)<profile-name>"
+$frontDoorProfileName = "$($prefix)-frontdoor-profile"
 
 # Create Azure Front Door profile.
 az afd profile create `
@@ -374,7 +374,7 @@ az afd profile create `
 # 6.3 Create Azure Front Door endpoint.
 
 # Azure Front Door endpoint.
-$frontDoorEndpointName = "$($prefix)<endpoint-name>"
+$frontDoorEndpointName = "$($prefix)-frontdoor-bots"
 
 az afd endpoint create `
   --resource-group $networkRGName `
@@ -385,7 +385,7 @@ az afd endpoint create `
 # 6.4 Create an origin group.
 
 # Origin group name.
-$fdOriginGroupName = "$($prefix)<origin-group-name>"
+$fdOriginGroupName = "$($prefix)-frontdoor-bots-group"
 
 az afd origin-group create `
   --resource-group $networkRGName `
@@ -405,7 +405,7 @@ az afd origin-group create `
 # Create first origin
 
 # First origin name
-$firstOriginName = "$($prefix)<first-origin-name>"
+$firstOriginName = "$($prefix)-frontdoor-bots-westeurope"
 
 az afd origin create `
   --resource-group $networkRGName `
@@ -424,7 +424,7 @@ az afd origin create `
 # Create second origin
 
 # Second origin name
-$secondOriginName = "$($prefix)<second-origin-name>"
+$secondOriginName = "$($prefix)-frontdoor-bots-eastus"
 
 az afd origin create `
   --resource-group $networkRGName `
@@ -501,7 +501,7 @@ $frontDoorBotEndpoint = "https://$($fdEndpoint.hostName)"
 # 7.1 Create gameapi container on second region.
 
 # Second game container name.
-$gameApi2 = "$($prefix)<second-gameapi-container-name>"
+$gameApi2 = "$($prefix)gameapi-eastus"
 
 # Deploy the second game container on the second region (in managed environment 2).
 az containerapp create `
@@ -519,12 +519,13 @@ az containerapp create `
   --dapr-app-port 8080
 
 # Second game container hostname.
-$gameContainerHN2 = "<second-bot-container-host-name>"
+# $gameContainerHN2 = "$($prefix)game-container-eastus"
+$gameContainerHN2 = Get-ContainerAppFqdn -resourceGroup $apiResourceGroup2 -containerAppName $gameApi2
 
 # 7.2 Create another endpoint.
 
 # Second endpoint name.
-$frontDoorGameEndpointName = "$($prefix)<second-endpoint-name>"
+$frontDoorGameEndpointName = "$($prefix)frontdoor-games"
 
 az afd endpoint create `
   --resource-group $networkRGName `
@@ -535,7 +536,7 @@ az afd endpoint create `
 # 7.3 Create a second origin group.
 
 # Second origin group name.
-$fdGameOriginGroupName = "$($prefix)<origin-group-name>"
+$fdGameOriginGroupName = "$($prefix)-frontdoor-game-group"
 
 az afd origin-group create `
   --resource-group $networkRGName `

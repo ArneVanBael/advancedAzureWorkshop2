@@ -7,12 +7,12 @@
 # Step 1: Create a Resource Group
 # Use the following command to create a new resource group. Replace `<email-resource-group>` with your desired name and `<resource-group-location>` with the appropriate Azure region (e.g., `westeurope`):
 
-$emailResourceGroup = 'your-resource-group-name'
+$emailResourceGroup = 'advanced-azure-workshop'
 
 # List all Azure locations. Select one that is close to you.
 az account list-locations -o table
 
-$location = 'your-location'
+$location = 'West Europe'
 
 az group create --name $emailResourceGroup --location $location
 
@@ -21,12 +21,12 @@ az group create --name $emailResourceGroup --location $location
 
 # Deploy an APIM resource within your resource group. Replace the placeholders with your desired values:
 
-$apimName = '<your-apim-name>'
+$apimName = 'aaw-apim'
 
 # This is for receiving notifications about API subscriptions.
 # It won't be used for this exercise but you need to set it to create the resource.
-$publisherName = '<your-publisher-name>'
-$publisherEmail = '<your@publisher.email>'
+$publisherName = 'Arne Van Bael'
+$publisherEmail = 'arne.vanbael@axxes.com'
 
 az apim create `
   --name $apimName `
